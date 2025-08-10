@@ -13,25 +13,22 @@
 function bubbleSort(nums) {
   // code goes here
   let swapped = true;
-  let tempStorage;
 
   while (swapped) {
     swapped = false;
 
-    for (let i = 0; i < nums.length; i++) {
+    for (let i = 0; i < nums.length - 1; i++) {
       if (nums[i] > nums[i + 1]) {
-        tempStorage = nums[i];
+        let tempStorage = nums[i];
 
         nums[i] = nums[i + 1];
         nums[i + 1] = tempStorage;
 
-        console.log("nums", nums);
         swapped = true;
       }
     }
   }
 
-  console.log("nums", nums);
   return nums;
 }
 
