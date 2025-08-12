@@ -36,7 +36,7 @@ function quickSort(nums) {
   }
 
   // recursively call quicksort on left and right array and combine them
-  return [].concat(...quickSort(leftArray), pivot, ...quickSort(rightArray));
+  return [].concat(quickSort(leftArray), pivot, quickSort(rightArray));
 }
 
 // unit tests
