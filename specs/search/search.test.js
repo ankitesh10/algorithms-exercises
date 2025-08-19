@@ -9,6 +9,34 @@ function linearSearch(id, array) {
 
 function binarySearch(id, array) {
   // code goes here
+
+  let start = 0;
+  let end = array.length - 1;
+
+  let middleIndex = Math.floor((start + end) / 2);
+
+  while (middleIndex >= 1) {
+    console.log("middleIndex", middleIndex);
+
+    const middleElement = array[middleIndex];
+
+    if (middleElement.id === id) {
+      return middleElement;
+    } else {
+      // if element is greater than middle go right
+      // else go left
+
+      if (id > middleElement.id) {
+        start = middleIndex + 1;
+      } else {
+        end = middleIndex - 1;
+      }
+    }
+
+    middleIndex = Math.floor((start + end) / 2);
+  }
+
+  return -1;
 }
 
 // unit tests
@@ -30,12 +58,12 @@ test.skip("linear search", function () {
       { id: 2, name: "Marc" },
       { id: 51, name: "Chris" },
       lookingFor,
-      { id: 14, name: "Ben" }
+      { id: 14, name: "Ben" },
     ])
   ).toBe(lookingFor);
 });
 
-test.skip("binary search", function () {
+test("binary search", function () {
   const lookingFor = { id: 23, name: "Brian" };
   expect(
     binarySearch(23, [
@@ -52,7 +80,7 @@ test.skip("binary search", function () {
       { id: 19, name: "Marc" },
       { id: 21, name: "Chris" },
       lookingFor,
-      { id: 24, name: "Ben" }
+      { id: 24, name: "Ben" },
     ])
   ).toBe(lookingFor);
 });
