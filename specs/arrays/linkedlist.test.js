@@ -25,55 +25,75 @@
 
 class LinkedList {
   constructor() {
-    this.head = null;
-    this.tail = null;
+    this.tail = this.head = null;
     this.length = 0;
   }
+
+  length() {
+    return this.length;
+  }
+
   push(value) {
     const node = new Node(value);
     this.length++;
+
     if (!this.head) {
       this.head = node;
     } else {
+      // current tail
       this.tail.next = node;
     }
+    // update tail
     this.tail = node;
   }
+
   pop() {
     return this.delete(this.length - 1);
   }
-  _find(index) {
+
+  #find(index) {
     if (index >= this.length) return null;
+
     let current = this.head;
+
     for (let i = 0; i < index; i++) {
       current = current.next;
     }
 
     return current;
   }
+
   get(index) {
-    const node = this._find(index);
+    const node = this.#find(index);
+
     if (!node) return void 0;
+
     return node.value;
   }
+
   delete(index) {
+    if (index >= this.length) return void 0;
+
     if (index === 0) {
       const head = this.head;
+
       if (head) {
-        this.head = head.next;
+        this.head = this.head.next;
       } else {
         this.head = null;
-        this.tail = null;
       }
       this.length--;
       return head.value;
     }
 
-    const node = this._find(index - 1);
-    const excise = node.next;
+    const prevNode = this.#find(index - 1);
+    const excise = prevNode.next;
+
     if (!excise) return null;
-    node.next = excise.next;
-    if (!node.next) this.tail = node.next;
+
+    prevNode.next = excise.next;
+    if (!prevNode.next) this.tail = prevNode;
+
     this.length--;
     return excise.value;
   }
@@ -82,7 +102,7 @@ class LinkedList {
 class Node {
   constructor(value) {
     this.value = value;
-    this.next = null;
+    this.ext = null;
   }
 }
 
