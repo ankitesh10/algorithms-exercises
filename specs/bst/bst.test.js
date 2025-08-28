@@ -16,41 +16,67 @@ right - Node/object - the right node which itself may be another tree
 
 */
 
+// class Tree {
+//   constructor() {
+//     this.root = null;
+//   }
+
+//   add(value) {
+//     const node = new Node(value);
+//     if (!this.root) {
+//       this.root = node;
+//       return;
+//     }
+
+//     // find the correct place to add
+
+//     let current = this.root;
+
+//     while (true) {
+//       if (value < current.value) {
+//         // go left
+
+//         if (!current.left) {
+//           current.left = node;
+//           return;
+//         } else {
+//           current = current.left;
+//         }
+//       } else {
+//         // or go right
+//         if (!current.right) {
+//           current.right = node;
+//           return;
+//         } else {
+//           current = current.right;
+//         }
+//       }
+//     }
+//   }
+
+//   toObject() {
+//     return this.root;
+//   }
+// }
+
+// class Node {
+//   constructor(value) {
+//     this.value = value;
+//     this.left = null;
+//     this.right = null;
+//   }
+// }
+
 class Tree {
   constructor() {
     this.root = null;
   }
 
   add(value) {
-    const node = new Node(value);
     if (!this.root) {
-      this.root = node;
-      return;
-    }
-
-    // find the correct place to add
-
-    let current = this.root;
-
-    while (true) {
-      if (value < current.value) {
-        // go left
-
-        if (!current.left) {
-          current.left = node;
-          return;
-        } else {
-          current = current.left;
-        }
-      } else {
-        // or go right
-        if (!current.right) {
-          current.right = node;
-          return;
-        } else {
-          current = current.right;
-        }
-      }
+      this.root = new Node(value);
+    } else {
+      this.root.add(value);
     }
   }
 
@@ -65,12 +91,27 @@ class Node {
     this.left = null;
     this.right = null;
   }
-}
 
-// you might consider using a Node class too
-// class Node {
-//   // code maybe goes here
-// }
+  add(value) {
+    // call add till node to insert is found
+
+    if (value < this.value) {
+      // go left
+      if (!this.left) {
+        this.left = new Node(value);
+      } else {
+        this.left.add(value);
+      }
+    } else {
+      // go right
+      if (!this.right) {
+        this.right = new Node(value);
+      } else {
+        this.right.add(value);
+      }
+    }
+  }
+}
 
 // unit tests
 // do not modify the below code
