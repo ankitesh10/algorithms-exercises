@@ -7,21 +7,55 @@
 */
 
 const heapSort = (array) => {
-  // code
+  array = createMaxHeap(array);
+
+  console.log(array);
+
+  for (let i = array.length - 1; i > 0; i--) {
+    swap(array, 0, i);
+    heapify(array, 0, i);
+  }
+
   return array;
 };
 
+const swap = (array, index1, index2) => {
+  const temp = array[index1];
+  array[index1] = array[index2];
+  array[index2] = temp;
+};
+
 const createMaxHeap = (array) => {
-  // code
+  for (let i = Math.floor(array.length / 2) - 1; i >= 0; i--) {
+    heapify(array, i, array.length);
+  }
+
+  return array;
 };
 
 const heapify = (array, index, heapSize) => {
-  // code
+  const left = 2 * index + 1;
+  const right = 2 * index + 2;
+
+  let largestIndex = index;
+
+  if (left < heapSize && array[left] > array[largestIndex]) {
+    largestIndex = left;
+  }
+
+  if (right < heapSize && array[right] > array[largestIndex]) {
+    largestIndex = right;
+  }
+
+  if (largestIndex !== index) {
+    swap(array, largestIndex, index);
+    heapify(array, largestIndex, heapSize);
+  }
 };
 
 // unit tests
 // do not modify the below code
-test.skip("heap sort", function () {
+test("heap sort", function () {
   const nums = [2, 5, 3, 8, 10, 6, 4, 7, 9, 1];
   heapSort(nums);
   expect(nums).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
