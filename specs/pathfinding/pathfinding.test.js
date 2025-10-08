@@ -16,8 +16,113 @@
 // the way I did. however feel free to use it if you'd like
 const logMaze = require("./logger");
 
+const BY_A = "A";
+const BY_B = "B";
+const BY_NO_ONE = "";
+
 function findShortestPathLength(maze, [xA, yA], [xB, yB]) {
-  // code goes here
+  const visited = createVisited(maze);
+
+  let aQueue = [visited[yA][xA]];
+  let bQueue = [visited[yB][xB]];
+
+  console.log(bQueue);
+
+  visited[yA][xA].openedBy = BY_A;
+  visited[yB][xB].openedBy = BY_B;
+
+  let iteration = 0;
+
+  while (aQueue.length && bQueue.length) {
+    iteration++;
+    const aNeighbors = aQueue.reduce(
+      (acc, node) => acc.concat(getNeighors(visited, node.x, node.y)),
+      []
+    );
+
+    aQueue = [];
+
+    for (let i = 0; i < aNeighbors.length; i++) {
+      const neighbor = aNeighbors[i];
+
+      if (neighbor.openedBy === BY_B) {
+        return neighbor.depth + iteration;
+      } else if (neighbor.openedBy === BY_NO_ONE) {
+        neighbor.openedBy = BY_A;
+        neighbor.depth = iteration;
+        aQueue.push(neighbor);
+      }
+    }
+
+    const bNeighbors = bQueue.reduce(
+      (acc, node) => acc.concat(getNeighors(visited, node.x, node.y)),
+      []
+    );
+
+    bQueue = [];
+
+    for (let i = 0; i < bNeighbors.length; i++) {
+      const neighbor = bNeighbors[i];
+
+      if (neighbor.openedBy === BY_A) {
+        return neighbor.depth + iteration;
+      } else if (neighbor.openedBy === BY_NO_ONE) {
+        neighbor.openedBy = BY_B;
+        neighbor.depth = iteration;
+        bQueue.push(neighbor);
+      }
+    }
+  }
+
+  return -1;
+}
+
+function getNeighors(visited, x, y) {
+  const neighbors = [];
+
+  // top
+  if (y - 1 >= 0 && !visited[y - 1][x].blocked) {
+    neighbors.push(visited[y - 1][x]);
+  }
+
+  // bottom
+  if (y + 1 < visited.length && !visited[y + 1][x].blocked) {
+    neighbors.push(visited[y + 1][x]);
+  }
+
+  // left
+  if (x - 1 >= 0 && !visited[y][x - 1].blocked) {
+    neighbors.push(visited[y][x - 1]);
+  }
+
+  // right
+  if (x + 1 < visited[0].length && !visited[y][x + 1].blocked) {
+    neighbors.push(visited[y][x + 1]);
+  }
+
+  return neighbors;
+}
+
+function createVisited(maze) {
+  const visited = [];
+
+  for (let y = 0; y < maze.length; y++) {
+    const row = [];
+    for (let x = 0; x < maze[0].length; x++) {
+      const node = maze[y][x];
+      row.push({
+        blocked: node === 1,
+        openedBy: BY_NO_ONE,
+        depth: 0,
+        y,
+        x,
+      });
+    }
+
+    visited.push(row);
+  }
+
+  return visited;
 }
 
 // there is a visualization tool in the completed exercise
@@ -26,12 +131,12 @@ function findShortestPathLength(maze, [xA, yA], [xB, yB]) {
 
 // unit tests
 // do not modify the below code
-describe.skip("pathfinding – happy path", function () {
+describe("pathfinding – happy path", function () {
   const fourByFour = [
     [2, 0, 0, 0],
     [0, 0, 0, 0],
     [0, 0, 0, 0],
-    [0, 0, 0, 2]
+    [0, 0, 0, 2],
   ];
   it("should solve a 4x4 maze", () => {
     expect(findShortestPathLength(fourByFour, [0, 0], [3, 3])).toEqual(6);
@@ -43,7 +148,7 @@ describe.skip("pathfinding – happy path", function () {
     [0, 0, 0, 0, 0, 0],
     [0, 1, 1, 1, 1, 1],
     [0, 0, 0, 0, 0, 0],
-    [0, 0, 2, 0, 0, 0]
+    [0, 0, 2, 0, 0, 0],
   ];
   it("should solve a 6x6 maze", () => {
     expect(findShortestPathLength(sixBySix, [1, 1], [2, 5])).toEqual(7);
@@ -57,7 +162,7 @@ describe.skip("pathfinding – happy path", function () {
     [0, 0, 0, 1, 0, 1, 1, 0],
     [0, 0, 0, 0, 0, 0, 1, 0],
     [0, 2, 0, 0, 0, 0, 1, 0],
-    [0, 0, 0, 0, 0, 0, 1, 2]
+    [0, 0, 0, 0, 0, 0, 1, 2],
   ];
   it("should solve a 8x8 maze", () => {
     expect(findShortestPathLength(eightByEight, [1, 7], [7, 7])).toEqual(16);
@@ -78,7 +183,7 @@ describe.skip("pathfinding – happy path", function () {
     [0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0],
     [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
     [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ];
   it("should solve a 15x15 maze", () => {
     expect(findShortestPathLength(fifteenByFifteen, [1, 1], [8, 8])).toEqual(
@@ -90,13 +195,13 @@ describe.skip("pathfinding – happy path", function () {
 // I care far less if you solve these
 // nonetheless, if you're having fun, solve some of the edge cases too!
 // just remove the .skip from describe.skip
-describe.skip("pathfinding – edge cases", function () {
+describe("pathfinding – edge cases", function () {
   const byEachOther = [
     [0, 0, 0, 0, 0],
     [0, 2, 2, 0, 0],
     [0, 0, 0, 0, 0],
     [0, 1, 1, 1, 1],
-    [0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0],
   ];
   it("should solve the maze if they're next to each other", () => {
     expect(findShortestPathLength(byEachOther, [1, 1], [2, 1])).toEqual(1);
@@ -107,7 +212,7 @@ describe.skip("pathfinding – edge cases", function () {
     [0, 2, 0, 0, 0],
     [0, 0, 1, 1, 1],
     [1, 1, 1, 0, 0],
-    [0, 0, 0, 0, 2]
+    [0, 0, 0, 0, 2],
   ];
   it("should return -1 when there's no possible path", () => {
     expect(findShortestPathLength(impossible, [1, 1], [4, 4])).toEqual(-1);
