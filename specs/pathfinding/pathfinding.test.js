@@ -26,8 +26,6 @@ function findShortestPathLength(maze, [xA, yA], [xB, yB]) {
   let aQueue = [visited[yA][xA]];
   let bQueue = [visited[yB][xB]];
 
-  console.log(bQueue);
-
   visited[yA][xA].openedBy = BY_A;
   visited[yB][xB].openedBy = BY_B;
 
